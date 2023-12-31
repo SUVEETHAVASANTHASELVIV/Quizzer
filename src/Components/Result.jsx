@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import '../Assets/CSS/Results.css'; // Import your external CSS file
+import '../Assets/CSS/Results.css'; 
 
 const ResultPage = ({ score, totalQuestions, correctAnswers, genre }) => {
     return(

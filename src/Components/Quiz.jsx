@@ -57,20 +57,20 @@ const Quiz = ({ apiData }) => {
       }
     }, [questions, index]);
     useEffect(() => {
-      setAnswered(false); // Reset answered state when moving to the next question
+      setAnswered(false); 
     }, [index]);
   
     const handleAnswerSelection = (selectedOption) => {
       if (!answered) {
         if (selectedOption === correctOption) {
-          // If the selected option matches the correct one, increment the score
+    
           setScore(score + 1);
         }
-        // If the user selected an option, mark it as answered and store the selected answer
+       
         setAnswered(true);
         setUserAnswer(selectedOption);
         setTimeout(() => {
-          setIndex((prev) => prev + 1); // Update index after delay
+          setIndex((prev) => prev + 1); 
         }, 1000);
       }
     };
