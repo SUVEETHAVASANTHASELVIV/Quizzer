@@ -7,12 +7,20 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import {Container} from 'react-bootstrap'
 import Row from 'react-bootstrap/Row';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { SearchBar } from './SearchBar';
+import { SearchResultsList } from './SearchResultsList';
+import Navbar from './Navbar';
 
-const Home = () => {
+const Home = ({apiData,setApiData}) => {
+  const [results, setResults] = useState([{id:0}]);
+  const [categories, setCategories] = useState("");
+  const[qnumber,setQnumber] = useState(0);
+  const [showResultsList, setShowResultsList] = useState(true);
   const navigate = useNavigate();
 
   const [validated, setValidated] = useState(false);
+  const [questionsError, setQuestionsError] = useState('');
 
 
   const handleSubmit = (event) => {
@@ -21,21 +29,38 @@ const Home = () => {
       event.preventDefault();
       event.stopPropagation();
     }
-    else{
-      navigate('/');
-    }
-
     setValidated(true);
   };
 
   const handleChange=(event)=>{
     const { name, value } = event.target;
+    console.log(results);
+    
+    
+    setApiData((prevData) => ({
+      ...prevData,
+      category: results[0].id,
+      noQuestion: value
+    }));
+    
+
+    const enteredValue = parseInt(value, 10); 
   
+      setQnumber(value);
+
+      if (enteredValue < 10) {
+        setQuestionsError('Questions less than 10 will not get points');
+      }
+      else{
+        setQuestionsError('');
+      }
 
   }
 
+
   return (
     <>
+    <Navbar/>
     <div className='Home_Container'>
       <Container>
         <Row className='justify-content-center'>
@@ -50,19 +75,26 @@ const Home = () => {
       
          <Form noValidate validated={validated} onSubmit={handleSubmit} className="justify-content-center" >
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-        <Form.Label>Sex</Form.Label>
-        <Form.Select aria-label="Default select example" name='sex' onChange={(event)=>handleChange(event)} className="form-select form-select-sm">
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Others">Others</option>
-    </Form.Select>
+        <Form.Label className='FormText'>Choose your Genre</Form.Label>
+
+        <SearchBar setResults={setResults} categories={categories} setCategories={setCategories}/>
+
+
+        {showResultsList &&results && results.length > 0 && <SearchResultsList results={results} categories={categories} setCategories={setCategories} setShowResultsList={setShowResultsList}/>}
       </Form.Group>
-      <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-        <Form.Label>Body Temperature in terms of Fahrenhit</Form.Label>
-        <Form.Control type="number" placeholder="Eg: 100.24" required name='temperature' onChange={(event)=>handleChange(event)} />
-        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-        <Form.Control.Feedback type="invalid">Please choose temperature for presice diagnosis.</Form.Control.Feedback>
+
+
+
+
+
+
+      <Form.Group className="mb-3" >
+        <Form.Label className='FormText'>Number Of Questions</Form.Label>
+        <Form.Control type="number" placeholder="Eg: 10" required name='questions' onChange={(event)=>handleChange(event)} />
+
+        <div className="Feed" type="invalid" style={{color:'#FF0303', fontSize:"18px",fontFamily:"monospace"}}>{questionsError}</div>
       </Form.Group>
+
       <Form.Group className="mb-3">
         <Form.Check
           required
@@ -71,8 +103,11 @@ const Home = () => {
           feedbackType="invalid"
           />
       </Form.Group>
-
-        <Button type="submit">Submit form</Button>
+      <Form.Group className="mb-3 text-center">
+        <Link to={'/quizz'}>
+  <Button >Let's Start</Button>
+  </Link>
+</Form.Group>
      
     </Form>
     </Col>
